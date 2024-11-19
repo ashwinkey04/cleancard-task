@@ -4,6 +4,10 @@
 - Prioritized users understanding the image capture process, so sketched out the capture screen on paper (In `assets/paper-sketch.jpeg`).
 - Added a home screen with guidelines to improve clarity which has three key instructions.
 - Plotted the graph and a placeholder value called Average Biomarker Level which is the mean of the biomarker levels from the server in the results screen.
+- **UI decisions**: 
+  - Colour palette and font were inspired from [cleancard's landing page](https://www.cleancard.bio/). 
+  - Onboarding guide was built using the package - [flutter_onboarding_slider](https://pub.dev/packages/flutter_onboarding_slider)
+  - Other UI elements are straight out of Flutter's material design components. 
 
 ## Requirements
 - Android device (v6.0 Marshmallow or higher)
@@ -35,9 +39,20 @@ Due to the time constraint, I did not implement a dedicated state management sys
 - **Claude Sonnet w/ Cursor**: I frequently use the code completion and generation features of Cursor using the Claude Sonnet model to primarily speed up the boring and repetitive tasks of my work like applying styles through natural language instead of manually specifying individual parameters, refactoring unorganized code to be more readable and efficient, and so on.
 - **Render**: As this is an android app that should work on any device, I used [Render](https://render.com/) to host the provided server code on `https://cleancard-task.onrender.com/` and point the app's upload service to use this URL.
 
-## Screen capture
-- Available in `assets/screen-capture/complete-flow-encoded.mp4`
+## Screens
 
+- Screen capture available in `assets/screen-capture/complete-flow-encoded.mp4`
+or [here](https://github.com/ashwinkey04/cleancard-task/raw/refs/heads/main/assets/screen-capture/complete-flow-encoded.mp4)
+- **Screenshots**:
 
+| Screenshot 1                                                                                              | Screenshot 2                                                                                              | Screenshot 3                                                                                              |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| ![Screenshot_1732018881](https://github.com/user-attachments/assets/dafbbf16-ef3b-44da-b3f0-d1eba7a4f719) | ![Screenshot_1732018895](https://github.com/user-attachments/assets/6980f130-d104-4a58-9805-f0ac01b2b68f) | ![Screenshot_1732018947](https://github.com/user-attachments/assets/16d8d735-763a-4cd2-9def-44fca5bf96e1) |
+
+| Screenshot 4                                                                                              | Screenshot 5                                                                                              | Screenshot 6                                                                                              |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| ![Screenshot_1732018954](https://github.com/user-attachments/assets/dac991e5-4eb8-44a6-b79e-69cf076d28b6) | ![Screenshot_1732018970](https://github.com/user-attachments/assets/9764c475-0bb0-46ba-a4f6-c4f18b344301) | ![Screenshot_1732019716](https://github.com/user-attachments/assets/6cd3fe1f-fe75-498c-af29-5252671dba37) |
+****
 ##### Misc
+
 > For help getting started with Flutter development, view the [online documentation](https://docs.flutter.dev/), which offers tutorials, samples, guidance on mobile development, and a full API reference.
