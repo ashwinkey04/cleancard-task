@@ -15,22 +15,56 @@ class CaptureScreen extends StatefulWidget {
   State<CaptureScreen> createState() => _CaptureScreenState();
 }
 
-class _CaptureScreenState extends State<CaptureScreen> {
+class _CaptureScreenState extends State<CaptureScreen>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   late CameraManager _cameraManager;
   List<XFile> capturedImages = [];
   bool showGuidelines = true;
+  late AnimationController _flashButtonController;
+  late Animation<double> _flashButtonAnimation;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _cameraManager = CameraManager();
     _cameraManager.initialize(widget.camera);
+    
+    _flashButtonController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    
+    _flashButtonAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.2,
+    ).animate(CurvedAnimation(
+      parent: _flashButtonController,
+      curve: Curves.easeInOut,
+    ));
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _cameraManager.dispose();
+    _flashButtonController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final CameraController cameraController = _cameraManager.controller;
+
+    if (!cameraController.value.isInitialized) {
+      return;
+    }
+
+    if (state == AppLifecycleState.inactive) {
+      cameraController.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      _cameraManager.initialize(widget.camera);
+    }
   }
 
   Future<void> _captureImage() async {
@@ -43,18 +77,19 @@ class _CaptureScreenState extends State<CaptureScreen> {
         }
       });
 
+      if (capturedImages.length == 2) {
+        _flashButtonController.repeat(reverse: true);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Use flash for varied lighting'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+
       if (capturedImages.length == 5) {
         _navigateToSummaryScreen();
       }
-    });
-  }
-
-  void _retakeImage(int index) async {
-    await _handleImageCapture(() async {
-      final image = await _cameraManager.controller.takePicture();
-      setState(() {
-        capturedImages[index] = image;
-      });
     });
   }
 
@@ -87,6 +122,9 @@ class _CaptureScreenState extends State<CaptureScreen> {
   }
 
   void _toggleFlashMode() {
+    if (_flashButtonController.isAnimating) {
+      _flashButtonController.stop();
+    }
     setState(() {
       _cameraManager.toggleFlashMode();
     });
@@ -142,16 +180,19 @@ class _CaptureScreenState extends State<CaptureScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  FloatingActionButton(
-                    onPressed: _toggleFlashMode,
-                    backgroundColor: theme.colorScheme.primary,
-                    child: Icon(
-                      _cameraManager.currentFlashMode == FlashMode.off
-                          ? Icons.flash_off
-                          : _cameraManager.currentFlashMode == FlashMode.always
-                              ? Icons.flash_on
-                              : Icons.flash_auto,
-                      size: 24,
+                  ScaleTransition(
+                    scale: _flashButtonAnimation,
+                    child: FloatingActionButton(
+                      onPressed: _toggleFlashMode,
+                      backgroundColor: theme.colorScheme.primary,
+                      child: Icon(
+                        _cameraManager.currentFlashMode == FlashMode.off
+                            ? Icons.flash_off
+                            : _cameraManager.currentFlashMode == FlashMode.always
+                                ? Icons.flash_on
+                                : Icons.flash_auto,
+                        size: 24,
+                      ),
                     ),
                   ),
                 ],
@@ -171,7 +212,6 @@ class _CaptureScreenState extends State<CaptureScreen> {
           else
             CapturedImagesList(
               capturedImages: capturedImages,
-              onRetake: _retakeImage,
               onRemove: _removeImage,
             ),
         ],

@@ -1,16 +1,16 @@
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
+
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
 
 class CapturedImagesList extends StatelessWidget {
   final List<XFile> capturedImages;
-  final Function(int) onRetake;
+
   final Function(int) onRemove;
 
   const CapturedImagesList({
     super.key,
     required this.capturedImages,
-    required this.onRetake,
     required this.onRemove,
   });
 
@@ -108,7 +108,7 @@ class CapturedImagesList extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.black.withOpacity(0.5), Colors.transparent],
-            begin: Alignment.bottomCenter,
+            begin: Alignment.topCenter,
             end: Alignment.center,
           ),
         ),
@@ -118,11 +118,10 @@ class CapturedImagesList extends StatelessWidget {
 
   Positioned _buildImageActions(int index, ThemeData theme) {
     return Positioned(
-      bottom: 4,
+      top: 4,
       right: 4,
       child: Row(
         children: [
-          _buildIconButton(Icons.replay, () => onRetake(index), theme),
           _buildIconButton(Icons.close, () => onRemove(index), theme),
         ],
       ),

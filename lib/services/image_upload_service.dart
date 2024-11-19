@@ -5,39 +5,41 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ImageUploadService {
-  final String _baseUrl = 'http://10.2.2.2:45457';
+  final String _baseUrl = 'https://cleancard-task.onrender.com/';
 
-  Future<Map<String, dynamic>> uploadImages(List<XFile> images) async {
-    final uri = Uri.parse(_baseUrl);
-    final request = http.MultipartRequest('POST', uri);
-
-    for (var i = 0; i < images.length; i++) {
-      final file = await http.MultipartFile.fromPath(
-        'image$i',
-        images[i].path,
-      );
-      request.files.add(file);
+  Future<Map<String, dynamic>> analyzeImages(List<XFile> images) async {
+    if (images.isEmpty) {
+      throw Exception('No images to upload');
     }
 
-    final response = await request.send();
-    final responseData = await response.stream.bytesToString();
-    final jsonData = json.decode(responseData);
+    final uri = Uri.parse(_baseUrl);
+    final file = await http.MultipartFile.fromPath(
+      'file',
+      images[0].path,
+    );
+
+    final request = http.Request('POST', uri)
+      ..headers['Content-Type'] = 'application/octet-stream'
+      ..bodyBytes = await file.finalize().toBytes();
+
+    final response = await http.Response.fromStream(await request.send());
+    final jsonData = json.decode(response.body);
 
     if (response.statusCode == 200) {
       return jsonData;
     } else {
       if (kDebugMode) {
         return {
-          'messge': 'Simulated success on debug environment',
+          'status': 'simulated success',
           'levels': [
-            0.2547040111978315,
-            0.20422688294300503,
-            0.28208205599386293,
-            0.21300636818935312,
-            0.5296302806887846,
-            0.5853518665734101,
-            0.8500778099638591,
-            0.6199193558702057
+            0.10782698102011974,
+            0.6037071865526278,
+            0.5490397665531002,
+            0.5541802285132418,
+            0.8701385240699487,
+            0.7554621183675393,
+            0.3983022762458544,
+            0.9653827180074022
           ]
         };
       }
